@@ -1,5 +1,8 @@
 const std = @import("std");
 
+/// Contains a single ags table
+/// TODO add function to dump to csv
+/// TODO add function to check data rows against the types given
 const ags_table = struct {
     group: []u8,
     headings: [][]u8,
@@ -7,6 +10,7 @@ const ags_table = struct {
     data: [][][]u8,
 };
 
+/// private enum to store the type of a row for easier if statements
 const row_type = enum {
     group,
     heading,
@@ -15,6 +19,9 @@ const row_type = enum {
     empty,
 };
 
+/// Check whether a string starts with a given prefix
+/// e.g. startsWith("test", "testing this string") = true
+/// e.g. startsWith("test", "grouping this string") = false
 fn startsWith(prefix: []const u8, str: []const u8) bool {
     const prefixLength = prefix.len;
     const strLength = str.len;
@@ -26,6 +33,7 @@ fn startsWith(prefix: []const u8, str: []const u8) bool {
     return std.mem.eql(u8, prefix, str[0..prefixLength]);
 }
 
+/// helper function to check the type of the current row in the ags file
 fn row_processor(row: []const u8) !row_type {
     if (startsWith("\"DATA", row)) {
         return row_type.data;
